@@ -1,7 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import "./styles.css";
+import Layout from './layouts/Default';
+import CopyIcon from './images/CopyIcon';
+import ThumbsUpIcon from './images/ThumbsUpIcon';
+import spongebob from './images/spongebob.png';
 
 function App() {
   const [input, setInput] = React.useState("");
@@ -18,20 +21,59 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <h1>Spongify</h1>
+    <Layout>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={input}
-          onChange={e => setInput(e.currentTarget.value)}
-        />
-        <button type="submit">Make it weird</button>
+        <div className="mockify-input-group">
+          <input
+            type="text"
+            value={input}
+            onChange={ (e) => setInput(e.currentTarget.value) }
+            placeholder="Give it some text"
+            autoFocus
+          />
+
+          <button type="submit" role="button">
+            <img src={spongebob} alt="Spongebob mocking."/>
+          </button>
+        </div>
       </form>
-      <p>Result: {result} </p>
-    </div>
+
+      { result.length ? <MockResults result={result.join("")} /> : null}
+    </Layout>
   );
 }
+
+function MockResults({ result }) {
+  const [buttonText, setButtonText] = React.useState("Copy it")
+
+  const copyText = (text) => {
+    try {
+      navigator.clipboard.writeText(text)
+    } catch (e) {
+      console.log(e)
+    }
+
+    setButtonText("Copied!")
+
+    setTimeout(() => {
+      setButtonText("Copy it")
+    }, 1500);
+  }
+
+  return (
+  <div className="mockify-results">
+    <h3>Weird results</h3>
+
+    <p>{ result }</p>
+
+    { result ? (
+      <button role="button" onClick={ () => copyText(result) }>
+        {buttonText == "Copy it" ? <CopyIcon /> : <ThumbsUpIcon />}
+        <span>{ buttonText }</span>
+      </button>
+    ) : null}
+  </div>
+)}
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
